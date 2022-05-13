@@ -1,0 +1,10 @@
+version: "3.7"
+services:
+  mailgun:
+    container_name: mailgun
+    image: thelay/imap-listener-slack-announcer:latest
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    env_file:
+      - .env
