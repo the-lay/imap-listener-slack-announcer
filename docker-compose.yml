@@ -1,7 +1,7 @@
 version: "3.7"
 services:
-  mailgun:
-    container_name: mailgun
+  email_listener:
+    container_name: email_listener
     image: thelay/imap-listener-slack-announcer:latest
     restart: unless-stopped
     ports:

@@ -3,9 +3,11 @@
 [<img src="https://img.shields.io/badge/github-repository-green.svg?logo=Github">](https://github.com/the-lay/imap-listener-slack-announcer)
 [<img src="https://github.com/the-lay/imap-listener-slack-announcer/actions/workflows/dockerhub_publish.yml/badge.svg?branch=main">](https://github.com/the-lay/imap-listener-slack-announcer/actions/workflows/dockerhub_publish.yml)
 
-Yet another incoming mailgun mail to slack utility.  
+This tool listens to a mailbox on an IMAP server and whenever there is a new unseen message,
+publishes it to Slack channel of your choice. 
+
 For ease of use, containerized [(Docker Hub)](https://hub.docker.com/r/thelay/imap-listener-slack-announcer/) 
-and configured with environment variables.
+and configured with environment variables (see `.env.sample` file).
 
 If you are using mailgun to receive emails, you can also try an earlier version of this code, 
 [the-lay/mailgun-slack-announcer](https://github.com/the-lay/mailgun-slack-announcer).
@@ -23,8 +25,8 @@ If you are using mailgun to receive emails, you can also try an earlier version 
     ```docker-compose
     version: "3.7"
     services:
-      mailgun:
-        container_name: mailgun
+      email_listener:
+        container_name: email_listener
         image: thelay/imap-listener-slack-announcer:latest
         restart: unless-stopped
         env_file:
