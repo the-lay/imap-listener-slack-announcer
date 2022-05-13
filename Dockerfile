@@ -1,6 +1,10 @@
-FROM tiangolo/meinheld-gunicorn-flask:python3.9
+FROM python:3.9-alpine
 
-COPY ./requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
+WORKDIR /usr/src/app
 
-COPY ./app /app
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY ./app .
+
+CMD [ "python", "main.py"]

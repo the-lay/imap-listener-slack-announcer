@@ -6,7 +6,8 @@
 This tool listens to a mailbox on an IMAP server and whenever there is a new unseen message,
 publishes it to Slack channel of your choice. 
 
-For ease of use, containerized [(Docker Hub)](https://hub.docker.com/r/thelay/imap-listener-slack-announcer/) 
+For ease of use,
+containerized [(Docker Hub)](https://hub.docker.com/r/thelay/imap-listener-slack-announcer/)
 and configured with environment variables (see `.env.sample` file).
 
 If you are using mailgun to receive emails, you can also try an earlier version of this code, 
@@ -18,7 +19,7 @@ If you are using mailgun to receive emails, you can also try an earlier version 
 2. Run the container and pass env file with...  
     ... Docker:
     ```bash
-    docker run -d -p 8000:80 --env-file .env thelay/imap-listener-slack-announcer:latest
+    docker run -d --env-file .env thelay/imap-listener-slack-announcer:latest
     ```
 
     ... Docker Compose (forwarding output to port 8000): 
@@ -31,14 +32,7 @@ If you are using mailgun to receive emails, you can also try an earlier version 
         restart: unless-stopped
         env_file:
           - .env
-        ports:
-          - "8000:80"
     ```
-
-In addition to env variables defined in `.env`, the docker image can take advantage of base image 
-[tiangolo/meinheld-gunicorn-flask-docker](https://github.com/tiangolo/meinheld-gunicorn-flask-docker)
-and use
-[its environment variables](https://github.com/tiangolo/meinheld-gunicorn-flask-docker#environment-variables).
 
 ## Message templating
 Maybe one day? For now change template in `main.py`, `process_email()` method.
