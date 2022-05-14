@@ -22,16 +22,23 @@ If you are using mailgun to receive emails, you can also try an earlier version 
     docker run -d --env-file .env thelay/imap-listener-slack-announcer:latest
     ```
 
-    ... Docker Compose (forwarding output to port 8000): 
+    ... Docker Compose (where for example, you can run multiple containers): 
     ```docker-compose
     version: "3.7"
     services:
-      email_listener:
-        container_name: email_listener
+      email_listener1:
+        container_name: email_listener1
         image: thelay/imap-listener-slack-announcer:latest
         restart: unless-stopped
         env_file:
-          - .env
+          - .env_1
+
+      email_listener2:
+        container_name: email_listener2
+        image: thelay/imap-listener-slack-announcer:latest
+        restart: unless-stopped
+        env_file:
+          - .env_2
     ```
 
 ## Message templating
