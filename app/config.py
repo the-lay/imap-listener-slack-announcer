@@ -20,7 +20,6 @@ class Settings(pydantic.BaseSettings):
     # Slack parameters
     slack_api_token: str
     slack_channel: str
-    administrator_id: str
     unfurl_links: bool = False
     unfurl_media: bool = False
 

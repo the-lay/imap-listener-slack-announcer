@@ -95,10 +95,6 @@ async def supervisor(func):
             if min(start_times) > (time.monotonic() - config.retry_interval):
                 await asyncio.sleep(config.restart_supress)
             else:
-                api.chat_postMessage(
-                    channel=config.administrator_id,
-                    text=f"Restarting IMAP listener due to connectivity issues...\n```{e.args}```",
-                )
                 print(f"Restarting...")
         except ImapError:
             await shutdown(loop=loop)

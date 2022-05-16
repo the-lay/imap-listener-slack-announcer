@@ -103,12 +103,10 @@ class ImapWorker:
 
                 # Handle connection
                 try:
-                    print("Starting IDLE mode... ", end="")
                     idle_task = await self.connection.idle_start(timeout=60)
                     await self.connection.wait_server_push()
                     self.connection.idle_done()
                     await asyncio.wait_for(idle_task, timeout=5)
-                    print("Finished.")
                 except asyncio.exceptions.TimeoutError:
                     raise ConnectionError("Connection to IMAP server is lost!")
                 except aioimaplib.Abort as e:
