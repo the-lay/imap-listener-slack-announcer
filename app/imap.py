@@ -118,10 +118,12 @@ class ImapWorker:
     async def _get_new_messages(self, process_message_func) -> None:
         try:
             seq_list, n_messages = await self._search_messages("UNSEEN")
-            print(f"Found {n_messages} new messages!")
             if n_messages > 0:
+                print(f"\nFound {n_messages} new messages!")
                 seq_msg_list = await self._fetch_message_bodies(seq_list)
                 await process_message_func(seq_msg_list)
+            else:
+                print(".", end="")
         except asyncio.exceptions.TimeoutError:
             raise ConnectionError("Timeout occurred!")
         except aioimaplib.Abort:
