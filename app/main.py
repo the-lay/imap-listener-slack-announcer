@@ -6,26 +6,14 @@ from collections import deque
 
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
-from loguru import logger
 
 from config import config
 from imap import ImapWorker, ImapError
+from utils import logger
 
 
 # Initialize Slack SDK
 api = WebClient(token=config.slack_api_token)
-
-# Setup logging
-logger.remove(0)
-log_file = f"logs/{config.smtp_user}.log"
-print(f"Saving data in {log_file}")
-logger.add(
-    log_file,
-    backtrace=True,
-    diagnose=True,
-    rotation="5 MB",
-    enqueue=True,
-)
 
 
 async def process_email(seq_msg_list: List[NamedTuple]):
@@ -116,15 +104,14 @@ async def supervisor(func):
             await shutdown(loop=loop)
 
 
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
+loop = asyncio.get_event_loop()
+worker = ImapWorker(
+    config.smtp_host,
+    config.smtp_port,
+    config.smtp_user,
+    config.smtp_pass,
+)
 
-    worker = ImapWorker(
-        config.smtp_host,
-        config.smtp_port,
-        config.smtp_user,
-        config.smtp_pass,
-    )
-
-    loop.create_task(supervisor(worker.run))
-    loop.run_forever()
+loop.create_task(supervisor(worker.run))
+loop.run_forever()
+logger.complete()

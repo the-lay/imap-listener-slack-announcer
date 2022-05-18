@@ -10,9 +10,9 @@ from typing import Optional, Tuple, List, Dict, NamedTuple
 from collections import namedtuple
 
 import aioimaplib
-from loguru import logger
 
 from config import config
+from utils import logger
 
 
 seq_date = namedtuple("seq_date", "seq date")
