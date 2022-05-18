@@ -30,6 +30,8 @@ If you are using mailgun to receive emails, you can also try an earlier version 
         container_name: email_listener1
         image: thelay/imap-listener-slack-announcer:latest
         restart: unless-stopped
+        volumes:
+          - ./logs:/usr/src/app/logs
         env_file:
           - .env_1
 
@@ -37,6 +39,8 @@ If you are using mailgun to receive emails, you can also try an earlier version 
         container_name: email_listener2
         image: thelay/imap-listener-slack-announcer:latest
         restart: unless-stopped
+        volumes:
+          - ./logs:/usr/src/app/logs
         env_file:
           - .env_2
     ```

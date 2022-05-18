@@ -17,11 +17,14 @@ api = WebClient(token=config.slack_api_token)
 
 # Setup logging
 logger.remove(0)
+log_file = f"logs/{config.smtp_user}.log"
+print(f"Saving data in {log_file}")
 logger.add(
-    f"{config.smtp_user.split('@')[0]}.log",
+    log_file,
     backtrace=True,
     diagnose=True,
     rotation="5 MB",
+    enqueue=True,
 )
 
 

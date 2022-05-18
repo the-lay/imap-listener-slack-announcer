@@ -4,7 +4,7 @@ services:
     container_name: email_listener
     image: thelay/imap-listener-slack-announcer:latest
     restart: unless-stopped
-    ports:
-      - "8000:80"
+    volumes:
+      - ./logs:/usr/src/app/logs
     env_file:
       - .env
