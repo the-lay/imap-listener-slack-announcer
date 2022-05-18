@@ -10,6 +10,7 @@ from typing import Optional, Tuple, List, Dict, NamedTuple
 from collections import namedtuple
 
 import aioimaplib
+from loguru import logger
 
 from config import config
 
@@ -66,11 +67,11 @@ class ImapWorker:
                 raise MailboxError
 
         except asyncio.exceptions.TimeoutError:
-            print(f"Unable to connect to IMAP server {self.host}:{self.port}!")
+            logger.error(f"Unable to connect to IMAP server {self.host}:{self.port}!")
         except CredentialsErrors:
-            print(f"Wrong credentials!")
+            logger.error(f"Wrong credentials!")
         except MailboxError:
-            print(f"Mailbox {config.mailbox} can not be selected!")
+            logger.error(f"Mailbox {config.mailbox} can not be selected!")
 
     async def disconnect(self):
         try:
@@ -82,9 +83,9 @@ class ImapWorker:
             await self.connection.logout()
 
         except asyncio.exceptions.TimeoutError:
-            print("Timeout during IMAP disconnection!")
+            logger.error("Timeout during IMAP disconnection!")
         except aioimaplib.Abort:
-            print(f"Can't disconnect session in state {self.state}!")
+            logger.error(f"Can't disconnect session in state {self.state}!")
 
     async def run(self, process_message_func):
 
@@ -119,11 +120,9 @@ class ImapWorker:
         try:
             seq_list, n_messages = await self._search_messages("UNSEEN")
             if n_messages > 0:
-                print(f"\nFound {n_messages} new messages!")
+                logger.info(f"\nFound {n_messages} new messages!")
                 seq_msg_list = await self._fetch_message_bodies(seq_list)
                 await process_message_func(seq_msg_list)
-            else:
-                print(".", end="")
         except asyncio.exceptions.TimeoutError:
             raise ConnectionError("Timeout occurred!")
         except aioimaplib.Abort:
@@ -163,7 +162,7 @@ class ImapWorker:
     ) -> None:
         for element in seq_msg_list:
             element: seq_msg
-            print("Processing message... ", end="")
+            logger.info("Processing message... ")
 
             # Go through the message
             for part in element.msg.walk():
@@ -183,4 +182,4 @@ class ImapWorker:
             # Mark message as seen
             await self.connection.store(element.seq, "+FLAGS", "\\Seen")
 
-            print("Finished.")
+            logger.info("Finished.")

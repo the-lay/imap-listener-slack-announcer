@@ -4,13 +4,25 @@ from typing import List, NamedTuple
 from email.utils import parsedate_to_datetime
 from collections import deque
 
-from config import config
-from imap import ImapWorker, ImapError
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
+from loguru import logger
+
+from config import config
+from imap import ImapWorker, ImapError
 
 
+# Initialize Slack SDK
 api = WebClient(token=config.slack_api_token)
+
+# Setup logging
+logger.remove(0)
+logger.add(
+    f"{config.smtp_user.split('@')[0]}.log",
+    backtrace=True,
+    diagnose=True,
+    rotation="5 MB",
+)
 
 
 async def process_email(seq_msg_list: List[NamedTuple]):
@@ -66,11 +78,12 @@ async def process_email(seq_msg_list: List[NamedTuple]):
                 )
 
         except SlackApiError as e:
+            logger.error(e.response["error"])
             api.chat_postMessage(channel=config.slack_channel, text=e.response["error"])
 
 
 async def shutdown(loop):
-    print("Shutting down... ", end="")
+    logger.info("Shutting down...")
     await worker.disconnect()
 
     tasks = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
@@ -82,7 +95,7 @@ async def shutdown(loop):
         pass
 
     loop.stop()
-    print("Finished.")
+    logger.info("Finished.")
 
 
 async def supervisor(func):
@@ -95,7 +108,7 @@ async def supervisor(func):
             if min(start_times) > (time.monotonic() - config.retry_interval):
                 await asyncio.sleep(config.restart_supress)
             else:
-                print(f"Restarting...")
+                logger.warning(f"Restarting in supervisor...")
         except ImapError:
             await shutdown(loop=loop)
 
